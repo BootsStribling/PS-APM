@@ -5,4 +5,6 @@ import { Component } from "@angular/core";
   templateUrl: './product-list.component.html'
 })
 
-export class ProductListComponent{ }
+export class ProductListComponent{ 
+  pageTitle: string = 'Product List';
+}
