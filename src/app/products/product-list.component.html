@@ -34,7 +34,7 @@
           <th>Rating</th>
         </tr>
       </thead>
-      <tbody *ngFor="let product of products">
+      <tbody *ngFor="let product of filteredProducts">
         <td>
           <img *ngIf="showImage"
             [src]="product.imageUrl"
