@@ -13,7 +13,7 @@ export class ProductListComponent implements OnInit{
   pageTitle = 'Product List';
   imageWidth = 50;
   imageMargin = 2;
-  showImage: boolean = false;
+  showImage: boolean = true;
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [];
   errorMessage: string = '';
