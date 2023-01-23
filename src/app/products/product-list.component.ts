@@ -1,18 +1,23 @@
 import { Component, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { IProduct } from "./product";
+import { ProductService } from "./product.service";
 
 @Component({
-  selector: 'pm-products',
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css']
+  styleUrls: ['./product-list.component.css'],
+  providers: [ ProductService ]
 })
 
 export class ProductListComponent implements OnInit{ 
   pageTitle = 'Product List';
   imageWidth = 50;
   imageMargin = 2;
-  showImage: boolean = false;
+  showImage: boolean = true;
   filteredProducts: IProduct[] = [];
+  products: IProduct[] = [];
+  errorMessage: string = '';
+  sub!: Subscription;
 
   private _listFilter: string = '';
   get listFilter(): string {
@@ -22,31 +27,11 @@ export class ProductListComponent implements OnInit{
     this._listFilter = value;
     this.filteredProducts = this.performFilter(value);
   }
+  
+  constructor(private productService: ProductService){
 
-  
-  products : IProduct[] = [
-    {
-      "productId": 1,
-      "productName": "Leaf Rake",
-      "productCode": "GDN-0011",
-      "releaseDate": "March 19, 2021",
-      "description": "Leaf rake with 48-inch wooden handle.",
-      "price": 19.95,
-      "starRating": 3.2,
-      "imageUrl": "assets/images/leaf_rake.png"
-    },
-    {
-      "productId": 2,
-      "productName": "Garden Cart",
-      "productCode": "GDN-0023",
-      "releaseDate": "March 18, 2021",
-      "description": "15 gallon capacity rolling garden cart",
-      "price": 32.99,
-      "starRating": 4.2,
-      "imageUrl": "assets/images/garden_cart.png"
-    },
-  ]
-  
+  }
+
   performFilter(filterBy: string) : IProduct[] {
     filterBy = filterBy.toLowerCase();
     return this.products.filter((product: IProduct) => product.productName.toLowerCase().includes(filterBy));
@@ -57,6 +42,20 @@ export class ProductListComponent implements OnInit{
   }
   
   ngOnInit(): void {
-    this.listFilter = 'cart';
+    this.sub = this.productService.getProducts().subscribe({
+      next: products => {
+        this.products = products;
+        this.filteredProducts = products;
+      },
+      error: err => this.errorMessage = err 
+    });
+  }
+  
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
+
+  onRatingClicked(message: string): void {
+    this.pageTitle = 'Product List ' + message;
   }
 }
